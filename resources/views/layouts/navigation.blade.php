@@ -97,11 +97,42 @@
     <!-- Responsive Navigation Menu -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
+            <!-- Dashboard (Admin y Cliente) -->
+            @if(in_array(Auth::user()->role, ['admin', 'cliente']))
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
-        </div>
+            @endif
 
+            <!-- Products (Admin y Vendedor) -->
+            @if(in_array(Auth::user()->role, ['admin', 'vendedor']))
+            <x-responsive-nav-link :href="route('products.index')" :active="request()->routeIs('products.*')">
+                {{ __('Products') }}
+            </x-responsive-nav-link>
+            @endif
+
+            <!-- Categories (Solo Admin) -->
+            @if(Auth::user()->role === 'admin')
+            <x-responsive-nav-link :href="route('categories.index')" :active="request()->routeIs('categories.*')">
+                {{ __('Categories') }}
+            </x-responsive-nav-link>
+            @endif
+
+            <!-- Customers (Admin, Cliente y Vendedor) -->
+            @if(in_array(Auth::user()->role, ['admin', 'cliente', 'vendedor']))
+            <x-responsive-nav-link :href="route('customers.index')" :active="request()->routeIs('customers.*')">
+                {{ __('Customers') }}
+            </x-responsive-nav-link>
+            @endif
+
+            <!-- Invoices (Solo Admin) -->
+            @if(Auth::user()->role === 'admin')
+            <x-responsive-nav-link :href="route('invoices.index')" :active="request()->routeIs('invoices.*')">
+                {{ __('Invoices') }}
+            </x-responsive-nav-link>
+            @endif
+        </div>
+    </div>
         <!-- Responsive Settings Options -->
         <div class="pt-4 pb-1 border-t border-gray-200">
             <div class="px-4">
