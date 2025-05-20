@@ -38,6 +38,21 @@ Route::middleware('auth')->group(function () {
     Route::get('/invoices', [InvoiceController::class, 'index'])
         ->middleware(CheckRole::class.':admin')
         ->name('invoices.index');
+    
+    // Pay Modes
+    Route::resource('pay-modes', PayModeController::class);
+    
+    // Products
+    Route::resource('products', ProductController::class);
+    
+    // Customers
+    Route::resource('customers', CustomerController::class);
+    
+    // Invoices
+    Route::resource('invoices', InvoiceController::class);
+    
+    // Details
+    Route::resource('details', DetailController::class);
 });
 
 require __DIR__.'/auth.php';
