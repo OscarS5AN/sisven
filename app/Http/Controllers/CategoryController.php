@@ -25,7 +25,8 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        //
+        $categories = Category::paginate(10);
+        return view('categories.index', compact('categories'));
     }
 
     /**
@@ -33,7 +34,7 @@ class CategoryController extends Controller
      */
     public function create()
     {
-        //
+        return view('categories.create');
     }
 
     /**
@@ -41,7 +42,15 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        //
+            $validated = $request->validate([
+            'name' => 'required|string|max:80',
+            'description' => 'nullable|string'
+        ]);
+
+        Category::create($validated);
+
+        return redirect()->route('categories.index')
+                        ->with('success', 'Category created successfully.');
     }
 
     /**
@@ -49,7 +58,7 @@ class CategoryController extends Controller
      */
     public function show(string $id)
     {
-        //
+        return view('categories.show', compact('category'));
     }
 
     /**
@@ -57,7 +66,7 @@ class CategoryController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        return view('categories.edit', compact('category'));
     }
 
     /**
@@ -65,7 +74,15 @@ class CategoryController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|string|max:80|unique:categories,name,'.$category->id,
+            'description' => 'nullable|string|max:255'
+        ]);
+
+        $category->update($validated);
+
+        return redirect()->route('categories.index')
+                         ->with('success', 'Category updated successfully.');
     }
 
     /**
@@ -73,6 +90,15 @@ class CategoryController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        // Verificar si la categoría tiene productos asociados antes de eliminar
+        if ($category->products()->exists()) {
+            return redirect()->back()
+                             ->with('error', 'Cannot delete category with associated products.');
+        }
+
+        $category->delete();
+
+        return redirect()->route('categories.index')
+                         ->with('success', 'Category deleted successfully.');
     }
 }
